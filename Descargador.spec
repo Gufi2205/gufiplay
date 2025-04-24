@@ -1,18 +1,21 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-
 a = Analysis(
     ['Descargador.py'],
     pathex=[],
     binaries=[],
-    datas=[('Descargador.py', '.')],
+    datas=[
+        ('Descargador.py', '.'),
+        ('ffmpeg/bin/ffmpeg.exe', 'ffmpeg/bin'),
+        ('ffmpeg/bin/ffplay.exe', 'ffmpeg/bin'),
+        ('ffmpeg/bin/ffprobe.exe', 'ffmpeg/bin'),
+    ],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
     excludes=[],
     noarchive=False,
-    optimize=0,
 )
 pyz = PYZ(a.pure)
 

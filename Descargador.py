@@ -34,8 +34,13 @@ class DownloadThread(QThread):
 
     def run(self):
         try:
-            # Crear el nombre del archivo de salida con la ruta completa
             output_template = os.path.join(self.destination_folder, '%(title)s.%(ext)s')
+
+            # Asegurarnos de que la ruta a FFmpeg es absoluta
+            ffmpeg_location = os.path.abspath(os.path.join(os.path.dirname(__file__), "ffmpeg", "bin", "ffmpeg.exe"))
+            
+            if not os.path.exists(ffmpeg_location):
+                raise Exception(f"FFmpeg no encontrado en: {ffmpeg_location}")
 
             if self.format_option == "MP3":
                 audio_quality = {
@@ -45,7 +50,7 @@ class DownloadThread(QThread):
                 }.get(self.quality, "128")
 
                 ydl_opts = {
-                    'format': 'bestaudio/best',
+                    'format': 'bestaudio',
                     'postprocessors': [{
                         'key': 'FFmpegExtractAudio',
                         'preferredcodec': 'mp3',
@@ -56,7 +61,12 @@ class DownloadThread(QThread):
                     'quiet': False,
                     'ignoreerrors': True,
                     'no_warnings': True,
-                    'progress_hooks': [self.progress_hook]
+                    'progress_hooks': [self.progress_hook],
+                    'ffmpeg_location': ffmpeg_location,  # Agregamos la ubicación de FFmpeg
+                    'extract_audio': True,
+                    'audio_format': 'mp3',
+                    'audio_quality': audio_quality,
+                    'prefer_ffmpeg': True
                 }
             else:  # MP4
                 format_str = {
